@@ -1,24 +1,34 @@
-import logo from './logo.svg';
+import { StarknetConfig, InjectedConnector, useAccount, useConnectors } from '@starknet-react/core';
 import './App.css';
 
-function App() {
+function ConnectWallet() {
+  const { address } = useAccount();
+  const { connectors, connect } = useConnectors();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div>{address ? `Connected as ${address}` : 'Not connected'}</div>
+      <ul>
+        {connectors.map((connector) => (
+          <li key={connector.id()}>
+            <button onClick={() => connect(connector)}>
+              Connect {connector.id()}
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
+  )
+}
+
+function App() {
+  const connectors = [new InjectedConnector({ options: { id: 'braavos' }})];
+  return (
+    <StarknetConfig connectors={connectors}>
+      <div className="App">
+	<ConnectWallet />
+      </div>
+    </StarknetConfig>
   );
 }
 
